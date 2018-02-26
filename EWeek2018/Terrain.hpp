@@ -37,7 +37,7 @@ public:
 public:
 	float	sampleAltitude( float x, float y ) const;
 
-	void	regenerate( float altitude, uint32_t sideResolution );
+	void	regenerate( float altitude, uint32_t sideResolution, uint32_t octaves = 8 );
 
 	void	submit( bgfx::ViewId view, const ShaderLibrary& shaders, int32_t sort = 0 ) const;
 

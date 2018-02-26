@@ -20,11 +20,18 @@ public:
 	ShaderLibrary();
 	ShaderLibrary( const ShaderLibrary& ) = delete;
 
-	~ShaderLibrary() = default;
+	~ShaderLibrary();
 
-	void reload();
+public:
+	void	reload();
 
-	void destroy();
+	void	destroy();
 
+	void	updateUniforms( const float (&eyePosition)[3] );
+
+public:
 	bgfx::ProgramHandle	terrainProgram;
+	bgfx::ProgramHandle atmosphereProgram;
+
+	bgfx::UniformHandle eyePositionUnifom;
 };

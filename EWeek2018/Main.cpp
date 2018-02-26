@@ -26,13 +26,15 @@ namespace {
 		BgfxResetBits  = BGFX_RESET_VSYNC | BGFX_RESET_SRGB_BACKBUFFER,
 		BgfxDebugBits  = BGFX_DEBUG_NONE,
 		DefaultSeed    = 6690u,
-		SideResolution = 512u
+		SideResolution = 1024u
 	};
 
 	enum : bgfx::ViewId { BgfxPrimaryView = 0 };
 
 	constexpr float CameraHeight = 10.0f;
 	constexpr float DefaultMu    = 1.01f;
+	constexpr float NearDistance = 0.1f;
+	constexpr float FarDistance  = 2000.0f;
 
 	class EWeek2018Example : public entry::AppI {
 	public:
@@ -60,7 +62,7 @@ namespace {
 
 			Terrain::Initialize( _terrainSeed, DefaultMu );
 
-			_terrain.regenerate( 400.0f, SideResolution );
+			_terrain.regenerate( 800.0f, SideResolution );
 			_shaderLibrary.reload();
 
 			cameraCreate();
@@ -74,6 +76,7 @@ namespace {
 			cameraDestroy();
 
 			_terrain.destroy();
+			_shaderLibrary.destroy();
 
 		//	We need to advance the frame so BGFX knows we're no longer using any frame-specific resources.
 			bgfx::frame();
@@ -95,10 +98,10 @@ namespace {
 			updateCamera( frameTime / static_cast<float>(bx::getHPFrequency()) );
 
 			float view[16];
-			float projection[16];
-
 			cameraGetViewMtx( view );
-			bx::mtxProj( projection, 60.0f, static_cast<float>(_screen.width) / static_cast<float>(_screen.height), 0.1f, 2000.0f, false );
+
+			float projection[16];
+			bx::mtxProj( projection, 60.0f, static_cast<float>(_screen.width) / static_cast<float>(_screen.height), NearDistance, FarDistance, false );
 
 			bgfx::setViewRect( BgfxPrimaryView, 0, 0, static_cast<uint16_t>(_screen.width), static_cast<uint16_t>(_screen.height) );
 			bgfx::setViewTransform( BgfxPrimaryView, view, projection );
@@ -111,14 +114,16 @@ namespace {
 		}
 
 		void updateCamera( float deltaTime ) {
-			float position[3];
 			cameraUpdate( deltaTime, _mouseState );
 
+			float position[3];
 			cameraGetPosition( position );
 
 			position[1] = _terrain.sampleAltitude( position[0], position[2] ) + CameraHeight;
 
 			cameraSetPosition( position );
+
+			_shaderLibrary.updateUniforms( position );
 		}
 
 	private:

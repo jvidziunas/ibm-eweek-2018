@@ -12,12 +12,11 @@
 //==================================================================//
 // INCLUDES
 //==================================================================//
+#include <ShaderLibrary.hpp>
 #include <Terrain.hpp>
 //------------------------------------------------------------------//
 #include <bgfx_utils.h>
-#include <bx/easing.h>
 #include <bx/bx.h>
-#include <ShaderLibrary.hpp>
 //------------------------------------------------------------------//
 
 namespace {
@@ -67,7 +66,7 @@ float Terrain::sampleAltitude( float x, float y ) const {
 	);
 }
 
-void Terrain::regenerate( float altitude, uint32_t resolution ) {
+void Terrain::regenerate( float altitude, uint32_t resolution, uint32_t octaves ) {
 	const uint32_t vertexCount = resolution * resolution;
 
 //	Generate Perlin noise for terrain mesh.
@@ -77,7 +76,7 @@ void Terrain::regenerate( float altitude, uint32_t resolution ) {
 			Vertex&	vertex = vertices[y * resolution + x];
 
 			vertex.position[0]  = static_cast<float>(x);
-			vertex.position[1]  = Noise( static_cast<float>(x) / resolution, static_cast<float>(y) / resolution, 6 ) * altitude;
+			vertex.position[1]  = Noise( static_cast<float>(x) / resolution, static_cast<float>(y) / resolution, octaves ) * altitude;
 			vertex.position[2]  = static_cast<float>(y);
 			vertex.texcoords[0] = (x + 0.5f) / resolution;
 			vertex.texcoords[1] = (y + 0.5f) / resolution;
@@ -88,13 +87,13 @@ void Terrain::regenerate( float altitude, uint32_t resolution ) {
 	const bgfx::Memory* indexMemory( bgfx::alloc( 6u * vertexCount * sizeof( uint32_t ) ) );
 	for (uint32_t y = 0, indexCount = 0; y < (resolution - 1); y++) {
 		for (uint32_t x = 0; x < (resolution - 1); x++, indexCount += 6) {
-		/*  Ordering visualization for a terrain quad:
-			[  2]-----[0|5]
+		/*  Ordering visualization for a terrain patch:
+			<2  >-----<0|5>
 			  | (1)   / |
 			  |     /   |
 			  |   /     |
 			  | /   (2) |
-			[1|4]-----[  3] */
+			<1|4>-----<  3> */
 			uint32_t* const quadIndices = reinterpret_cast<uint32_t*>( indexMemory->data ) + indexCount;
 			const uint32_t  vertexId    = y * resolution + x;
 
