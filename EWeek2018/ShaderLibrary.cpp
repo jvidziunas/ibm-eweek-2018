@@ -40,7 +40,9 @@ void ShaderLibrary::reload() {
 	std::swap( terrainProgram, program );
 	DestroyHandle( program );
 
-	// program = loadProgram( "vs_atmosphere", "fs_atmosphere" );
+	program = loadProgram( "vs_atmosphere", "fs_atmosphere" );
+	std::swap( atmosphereProgram, program );
+	DestroyHandle( program );
 
 	if (!bgfx::isValid( eyePositionUnifom )) {
 		eyePositionUnifom = bgfx::createUniform( "u_eyePosition", bgfx::UniformType::Vec4 );

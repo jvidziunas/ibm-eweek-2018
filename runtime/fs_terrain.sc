@@ -4,7 +4,7 @@ $input v_position, v_texcoord0
 
 uniform vec4 u_eyePosition;
 
-#define u_fogAttenuation 0.0065
+#define u_fogAttenuation 0.00065
 #define u_skyColor       vec3( 0.5, 0.6, 0.65 )
 #define u_sunColor       vec3( 1.0, 0.9, 0.7 )
 #define u_groundColor    vec3( 0.255, 0.275, 0.2 )

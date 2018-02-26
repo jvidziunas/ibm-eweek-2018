@@ -118,10 +118,9 @@ namespace {
 
 			float position[3];
 			cameraGetPosition( position );
-
-			position[1] = _terrain.sampleAltitude( position[0], position[2] ) + CameraHeight;
-
-			cameraSetPosition( position );
+		//  Disabled as it results in very jerky motion.
+		//  position[1] = _terrain.sampleAltitude( position[0], position[2] ) + CameraHeight;
+		//	cameraSetPosition( position );
 
 			_shaderLibrary.updateUniforms( position );
 		}
