@@ -1,4 +1,4 @@
-$input v_position, v_texcoord0
+$input v_texcoord0
 
 #include "common/common.sh"
 

@@ -13,6 +13,7 @@
 //==================================================================//
 #include <ShaderLibrary.hpp>
 #include <Terrain.hpp>
+#include <Sky.hpp>
 //------------------------------------------------------------------//
 #include <entry/input.h>
 #include <bgfx_utils.h>
@@ -60,10 +61,13 @@ namespace {
 			bgfx::reset( width, height, (_resetBits = BgfxResetBits) );
 			bgfx::setViewClear( BgfxPrimaryView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0 );
 
-			Terrain::Initialize( _terrainSeed, DefaultMu );
+			Terrain::initialize( _terrainSeed, DefaultMu );
+			Sky::initialize();
+
+			_shaderLibrary.regenerate();
 
 			_terrain.regenerate( 800.0f, SideResolution );
-			_shaderLibrary.reload();
+			_sky.regenerate( bgfx::getCaps()->originBottomLeft );
 
 			cameraCreate();
 
@@ -75,6 +79,7 @@ namespace {
 		int shutdown() override {
 			cameraDestroy();
 
+			_sky.destroy();
 			_terrain.destroy();
 			_shaderLibrary.destroy();
 
@@ -95,18 +100,22 @@ namespace {
 			const int64_t frameTime = now - last;
 			last = now;
 
-			updateCamera( frameTime / static_cast<float>(bx::getHPFrequency()) );
+			const float deltaTime = frameTime / static_cast<float>(bx::getHPFrequency());
 
-			float view[16];
+			updateCamera( deltaTime );
+			updateSky( deltaTime );
+
+			float view[4 * 4];
 			cameraGetViewMtx( view );
 
-			float projection[16];
-			bx::mtxProj( projection, 60.0f, static_cast<float>(_screen.width) / static_cast<float>(_screen.height), NearDistance, FarDistance, false );
+			float projection[4 * 4];
+			bx::mtxProj( projection, 60.0f, static_cast<float>(_screen.width) / static_cast<float>(_screen.height), NearDistance, FarDistance, bgfx::getCaps()->homogeneousDepth );
 
 			bgfx::setViewRect( BgfxPrimaryView, 0, 0, static_cast<uint16_t>(_screen.width), static_cast<uint16_t>(_screen.height) );
 			bgfx::setViewTransform( BgfxPrimaryView, view, projection );
 
 			_terrain.submit( BgfxPrimaryView, _shaderLibrary );
+			_sky.submit( BgfxPrimaryView, _shaderLibrary );
 
 			bgfx::frame();
 
@@ -125,6 +134,8 @@ namespace {
 			_shaderLibrary.updateUniforms( position );
 		}
 
+		void updateSky( float /*deltaTime*/ ) {}
+
 	private:
 		struct {
 			uint32_t width;
@@ -138,6 +149,7 @@ namespace {
 
 		ShaderLibrary     _shaderLibrary;
 		Terrain           _terrain;
+		Sky               _sky;
 		entry::MouseState _mouseState;
 	};
 

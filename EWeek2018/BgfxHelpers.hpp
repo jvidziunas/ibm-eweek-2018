@@ -1,5 +1,5 @@
 /*==================================================================*\
-  ShaderLibrary.hpp
+  BgfxHelpers.hpp
   ------------------------------------------------------------------
   Purpose:
   
@@ -15,23 +15,9 @@
 #include <bgfx/bgfx.h>
 //------------------------------------------------------------------//
 
-class ShaderLibrary {
-public:
-	ShaderLibrary( const ShaderLibrary& ) = delete;
-	ShaderLibrary();
-
-	~ShaderLibrary();
-
-public:
-	void	regenerate();
-
-	void	destroy();
-
-	void	updateUniforms( const float (&eyePosition)[3] );
-
-public:
-	bgfx::ProgramHandle	terrainProgram;
-	bgfx::ProgramHandle atmosphereProgram;
-
-	bgfx::UniformHandle eyePositionUnifom;
-};
+template <typename Handle>
+inline void DestroyHandle( Handle handle ) {
+	if (bgfx::isValid( handle )) {
+		bgfx::destroy( handle );
+	}
+}

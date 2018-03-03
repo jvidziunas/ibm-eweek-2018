@@ -13,31 +13,21 @@
 // INCLUDES
 //==================================================================//
 #include <ShaderLibrary.hpp>
+#include <BgfxHelpers.hpp>
 #include <Terrain.hpp>
 //------------------------------------------------------------------//
 #include <bgfx_utils.h>
 #include <bx/bx.h>
 //------------------------------------------------------------------//
 
-namespace {
-
-	template <typename Handle>
-	inline void DestroyHandle( Handle handle ) {
-		if (bgfx::isValid( handle )) {
-			bgfx::destroy( handle );
-		}
-	}
-
-}	// anonymous namespace
-
 bgfx::VertexDecl Terrain::Vertex::Declaration;
 PerlinGenerator<> Terrain::Noise;
 
-void Terrain::Initialize( uint32_t seed, float mu ) {
+void Terrain::initialize( uint32_t seed, float mu ) {
 	Noise.reseed( seed, mu );
 
 	Vertex::Declaration.begin()
-		.add( bgfx::Attrib::Position, 3, bgfx::AttribType::Float )
+		.add( bgfx::Attrib::Position,  3, bgfx::AttribType::Float )
 		.add( bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float )
 	.end();
 }

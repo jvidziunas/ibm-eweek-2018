@@ -1,3 +1,8 @@
 .vs/* 
 **.user
 x64/*
+Debug/*
+Release/*
+EWeek2018/x64/*
+EWeek2018/Debug/*
+EWeek2018/Release/*

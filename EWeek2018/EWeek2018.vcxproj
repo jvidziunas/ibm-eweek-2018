@@ -168,11 +168,14 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ShaderLibrary.cpp" />
+    <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BgfxHelpers.hpp" />
     <ClInclude Include="PerlinGenerator.hpp" />
     <ClInclude Include="ShaderLibrary.hpp" />
+    <ClInclude Include="Sky.hpp" />
     <ClInclude Include="Terrain.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

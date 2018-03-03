@@ -1,5 +1,5 @@
 /*==================================================================*\
-  Terrain.hpp
+  Sky.hpp
   ------------------------------------------------------------------
   Purpose:
   
@@ -12,14 +12,12 @@
 //==================================================================//
 // INCLUDES
 //==================================================================//
-#include <PerlinGenerator.hpp>
 #include <bgfx/bgfx.h>
-#include <memory>
 //------------------------------------------------------------------//
 
 class ShaderLibrary;
 
-class Terrain {
+class Sky {
 public:
 	struct Vertex {
 		static bgfx::VertexDecl Declaration;
@@ -29,31 +27,21 @@ public:
 	};
 
 public:
-	Terrain( const Terrain& ) = delete;
-	Terrain();
+	Sky( const Sky& ) = delete;
+	Sky();
 
-	~Terrain();
+	~Sky();
 
 public:
-	float	sampleAltitude( float x, float y ) const;
+	void	regenerate( bool bottomLeftOrigin );
 
-	void	regenerate( float altitude, uint32_t sideResolution, uint32_t octaves = 8 );
-
-	void	submit( bgfx::ViewId view, const ShaderLibrary& shaders, int32_t sort = 0 ) const;
+	void	submit( bgfx::ViewId view, const ShaderLibrary& shaders, int32_t sort = 1 ) const;
 
 	void	destroy();
 
 public:
-	static void	initialize( uint32_t seed, float mu );
+	static void initialize();
 
 private:
-	static PerlinGenerator<>  Noise;
-
-	std::unique_ptr<Vertex[]> _vertices;
-	uint32_t                  _sideResolution;
-
-	bgfx::VertexBufferHandle  _vertexBuffer;
-	bgfx::IndexBufferHandle   _indexBuffer;
-
-	float                     _localToWorld[4 * 4];
+	bgfx::VertexBufferHandle _vertexBuffer;
 };
