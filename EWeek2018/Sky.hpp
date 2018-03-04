@@ -23,7 +23,6 @@ public:
 		static bgfx::VertexDecl Declaration;
 		
 		float	position[3];
-		float	texcoords[2];
 	};
 
 public:
@@ -40,8 +39,12 @@ public:
 	void	destroy();
 
 public:
+	void	updateUniforms( float appTime );
+
+public:
 	static void initialize();
 
 private:
 	bgfx::VertexBufferHandle _vertexBuffer;
+	bgfx::UniformHandle      _sunDirection;
 };

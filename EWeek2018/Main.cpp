@@ -123,18 +123,17 @@ namespace {
 		}
 
 		void updateCamera( float deltaTime ) {
+			float position[3];
+
 			cameraUpdate( deltaTime, _mouseState );
 
-			float position[3];
 			cameraGetPosition( position );
-		//  Disabled as it results in very jerky motion.
-		//  position[1] = _terrain.sampleAltitude( position[0], position[2] ) + CameraHeight;
-		//	cameraSetPosition( position );
-
 			_shaderLibrary.updateUniforms( position );
 		}
 
-		void updateSky( float /*deltaTime*/ ) {}
+		void updateSky( float deltaTime ) {
+			_sky.updateUniforms( deltaTime );
+		}
 
 	private:
 		struct {
